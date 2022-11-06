@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const Users = ({ users }) => {
   const [selectedUserId, setSelectedUserId] = useState(0);
@@ -50,23 +50,50 @@ const UsersList = ({ users, selectedUserId, selectUser }) => {
 };
 
 const SingleUser = ({ user }) => {
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    const userPostsUrl = `https://jsonplaceholder.typicode.com/users/${user.id}/posts`;
+    setPosts([]);
+    fetch(userPostsUrl)
+      .then((res) => res.json())
+      .then((json) => setPosts(json));
+  }, [user.id]);
+
   return (
-    <>
-      <h2>{user.name}</h2>
-      <dl>
-        <dt>Username</dt>
-        <dd>{user.username}</dd>
-        <dt>email</dt>
-        <dd>{user.email}</dd>
-        <dt>Phone</dt>
-        <dd>{user.phone}</dd>
-        <dt>Website</dt>
-        <dd>{user.website}</dd>
-        <dt>Company</dt>
-        <dd>{user.company.name}</dd>
-      </dl>
-    </>
+    <div className="row">
+      <div className="col col-md-7">
+        <h2>{user.name}</h2>
+        <dl>
+          <dt>Username</dt>
+          <dd>{user.username}</dd>
+          <dt>email</dt>
+          <dd>{user.email}</dd>
+          <dt>Phone</dt>
+          <dd>{user.phone}</dd>
+          <dt>Website</dt>
+          <dd>{user.website}</dd>
+          <dt>Company</dt>
+          <dd>{user.company.name}</dd>
+        </dl>
+      </div>
+      <div className="col col-md-5">
+        <UserPosts user={user} posts={posts} />
+      </div>
+    </div>
   );
 };
 
 const NoUserSelected = () => <p className="info">Please select a user</p>;
+
+const UserPosts = ({ user, posts }) => {
+  return (
+    <>
+      <h4>Posts by {user.name}</h4>
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </>
+  );
+};
