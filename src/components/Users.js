@@ -12,7 +12,6 @@ export const Users = ({ users }) => {
           selectedUserId={selectedUserId}
           selectUser={setSelectedUserId}
         />
-        ;
       </div>
       <div className="col col-md-9">
         {selectedUser ? <SingleUser user={selectedUser} /> : <NoUserSelected />}
