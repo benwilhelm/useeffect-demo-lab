@@ -1,19 +1,20 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Users } from './components/Users';
-// import { users as userData } from './data/users';
 
-const usersUrl = 'https://jsonplaceholder.typicode.com/users';
+const dataUrl = 'https://jsonplaceholder.typicode.com/users';
+
+const fetchUsers = async () => {
+  const res = await fetch(dataUrl);
+  return await res.json();
+};
 
 function App() {
   const [userData, setUserData] = useState([]);
-
-  fetch(usersUrl)
-    .then((response) => response.json())
-    .then((json) => {
-      console.log('setting user data');
-      setUserData(json);
-    });
+  useEffect(() => {
+    console.log('setting user data');
+    fetchUsers().then(setUserData);
+  }, []);
 
   return (
     <div className="container">
