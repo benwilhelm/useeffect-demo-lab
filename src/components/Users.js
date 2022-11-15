@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getUserPosts } from '../data/users.service';
 
 export const Users = ({ users }) => {
   const [selectedUserId, setSelectedUserId] = useState(0);
@@ -49,16 +50,25 @@ const UsersList = ({ users, selectedUserId, selectUser }) => {
   );
 };
 
-const SingleUser = ({ user }) => {
+const useUserPosts = (userId) => {
   const [posts, setPosts] = useState([]);
-  useEffect(() => {
-    const userPostsUrl = `https://jsonplaceholder.typicode.com/users/${user.id}/posts`;
-    setPosts([]);
-    fetch(userPostsUrl)
-      .then((res) => res.json())
-      .then((json) => setPosts(json));
-  }, [user.id]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    setIsFetching(true);
+    return getUserPosts(userId, {
+      onSuccess: setPosts,
+      onFailure: setError,
+      onComplete: () => setIsFetching(false),
+    });
+  }, [userId]);
+
+  return [posts, isFetching, error];
+};
+
+const SingleUser = ({ user }) => {
+  const [posts, fetching, error] = useUserPosts(user.id);
   return (
     <div className="row">
       <div className="col col-md-7">
@@ -77,7 +87,13 @@ const SingleUser = ({ user }) => {
         </dl>
       </div>
       <div className="col col-md-5">
-        <UserPosts user={user} posts={posts} />
+        {fetching ? (
+          <Loading />
+        ) : error ? (
+          <Error error={error} />
+        ) : (
+          <UserPosts user={user} posts={posts} />
+        )}
       </div>
     </div>
   );
@@ -97,3 +113,6 @@ const UserPosts = ({ user, posts }) => {
     </>
   );
 };
+
+const Loading = () => <p>Loading...</p>;
+const Error = ({ error }) => <pre>{JSON.stringify(error, null, 2)}</pre>;
