@@ -1,3 +1,24 @@
+# Installation
+
+```sh
+# Clone the repository
+git clone https://github.com/benwilhelm/useeffect-demo-lab
+
+# change to source code directory
+cd useeffect-demo-lab 
+
+# Install npm dependencies
+npm init
+```
+
+# Running the app
+
+Start the app by typing `npm start` from the project directory, then visit `http://localhost:3000`
+
+---
+---
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
